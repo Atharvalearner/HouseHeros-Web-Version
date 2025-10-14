@@ -14,8 +14,20 @@ public class User {
     private Long id;
 
     private String username;
+    private String role = "USER";
+   
+    public String getRole() {
+		return role;
+	}
+	public void setRole(String role) {
+		this.role = role;
+	}
+	@Column(unique = true, nullable = false)
     private String email;
+    
+    @Column(unique = false)
     private String password;
+        
 	public Long getId() {
 		return id;
 	}
