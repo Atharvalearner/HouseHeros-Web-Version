@@ -34,16 +34,17 @@ public class AuthController {
         String username = request.get("username");
         String password = request.get("password");
         String email = request.get("email");
-
+        String role = request.getOrDefault("role", "USER");
+        
         if (userRepository.findByEmail(email).isPresent()) {
-            return Map.of("error", "Username already exists");
+            return Map.of("error", "Email already exists");
         }
 
         User newUser = new User();
         newUser.setUsername(username);
         newUser.setPassword(passwordEncoder.encode(password));
-        newUser.setRole("USER");
         newUser.setEmail(email);
+        newUser.setRole(role.toUpperCase());
         
         userRepository.save(newUser);
 
@@ -52,7 +53,6 @@ public class AuthController {
 
     @PostMapping("/login")
     public Map<String, String> login(@RequestBody Map<String, String> request) {
-        String username = request.get("username");
         String password = request.get("password");
         String email = request.get("email");
         
