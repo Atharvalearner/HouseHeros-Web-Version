@@ -24,7 +24,7 @@ public class WorkerProfileController {
 	public ResponseEntity<WorkerProfile> createOrUpdateProfile(Authentication authentication,@RequestBody WorkerProfile payload) {
 
 		User userDetails = (User) authentication.getPrincipal();
-		String email = userDetails.getUsername(); // ✅ get logged-in user’s email
+		String email = userDetails.getUsername(); 
 		WorkerProfile saved = workerProfileService.createOrUpdateProfile(email, payload);
 		return ResponseEntity.ok(saved);
 	}

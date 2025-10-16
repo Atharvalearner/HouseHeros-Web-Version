@@ -20,17 +20,17 @@ public class WorkerProfile {
 
     private String fullName;
     private String occupation;       
-    private Integer experienceYears;  // e.g., 5
+    private Integer experienceYears;  
     
     @Column(length = 1000)
-    private String skills;            // comma separated or JSON string
+    private String skills;          
     private String phone;
     private String address;
     private String city;
     
     @Column(length = 2000)
-    private String description;       // bio/intro
-    private String imageUrl;          // profile photo URL
+    private String description;      
+    private String imageUrl;      
     private Boolean isApproved = false;
 
     private Instant createdAt = Instant.now();

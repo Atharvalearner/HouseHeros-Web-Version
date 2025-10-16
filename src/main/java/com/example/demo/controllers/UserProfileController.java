@@ -4,6 +4,7 @@ import com.example.demo.models.UserProfile;
 import com.example.demo.services.UserProfileService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,7 +19,8 @@ public class UserProfileController {
 
 	@PostMapping
 	public ResponseEntity<UserProfile> createOrUpdate(Authentication authentication, @RequestBody UserProfile payload) {
-		String email = (String) authentication.getPrincipal();
+		User userDetails = (User) authentication.getPrincipal();
+		String email = userDetails.getUsername();
 		UserProfile saved = userProfileService.createOrUpdateProfile(email, payload);
 		return ResponseEntity.ok(saved);
 	}
