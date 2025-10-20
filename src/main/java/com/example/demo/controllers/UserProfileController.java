@@ -28,7 +28,6 @@ public class UserProfileController {
 	@GetMapping("/me")
 	public ResponseEntity<?> getMyProfile(Authentication authentication) {
 		String email = (String) authentication.getPrincipal();
-		return userProfileService.getByUserEmail(email).map(ResponseEntity::ok)
-				.orElseGet(() -> ResponseEntity.notFound().build());
+		return userProfileService.getByUserEmail(email).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
 	}
 }

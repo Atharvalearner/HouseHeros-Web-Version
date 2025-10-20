@@ -33,6 +33,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
                         .requestMatchers("/api/worker/**").hasAuthority("WORKER")
                         .requestMatchers("/api/user/**").hasAuthority("USER")
+                        .requestMatchers("/api/reviews/**").permitAll()
                         .requestMatchers("/api/worker/profile/public").permitAll()   // public listing
                         .anyRequest().authenticated()
                 )

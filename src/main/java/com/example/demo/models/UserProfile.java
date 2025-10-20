@@ -10,6 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "user_profiles")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class UserProfile {
 
     @Id

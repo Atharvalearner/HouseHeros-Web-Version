@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Getter
 @Setter
 @Table(name = "worker_profiles")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "user"})
 public class WorkerProfile {
 
     @Id

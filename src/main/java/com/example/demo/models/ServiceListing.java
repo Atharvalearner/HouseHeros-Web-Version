@@ -68,4 +68,5 @@ public class ServiceListing {
 	public void setWorker(WorkerProfile worker) {
 		this.worker = worker;
 	}
+
 }
