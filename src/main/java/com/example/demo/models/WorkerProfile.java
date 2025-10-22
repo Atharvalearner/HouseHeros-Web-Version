@@ -12,35 +12,37 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Getter
 @Setter
 @Table(name = "worker_profiles")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "user"})
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler", "user" })
 public class WorkerProfile {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    private String fullName;
-    private String occupation;       
-    private Integer experienceYears;  
-    
-    @Column(length = 1000)
-    private String skills;          
-    private String phone;
-    private String address;
-    private String city;
-    
-    @Column(length = 2000)
-    private String description;      
-    private String imageUrl;      
-    private Boolean isApproved = false;
+	private String fullName;
+	private String occupation;
+	private Integer experienceYears;
+	private double hourlyRate;
+	private double averageRating;
 
-    private Instant createdAt = Instant.now();
-    private Instant updatedAt = Instant.now();
+	@Column(length = 1000)
+	private String skills;
+	private String phone;
+	private String address;
+	private String city;
 
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", unique = true)
-    private User user;
+	@Column(length = 2000)
+	private String description;
+	private String imageUrl;
+	private Boolean isApproved = false;
+
+	private Instant createdAt = Instant.now();
+	private Instant updatedAt = Instant.now();
+
+	@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id", unique = true)
+	private User user;
 
 	public Long getId() {
 		return id;
@@ -153,6 +155,20 @@ public class WorkerProfile {
 	public void setUser(User user) {
 		this.user = user;
 	}
-    
-    
+
+	public double getAverageRating() {
+		return averageRating;
+	}
+
+	public void setAverageRating(double averageRating) {
+		this.averageRating = averageRating;
+	}
+
+	public double getHourlyRate() {
+		return hourlyRate;
+	}
+
+	public void setHourlyRate(double hourlyRate) {
+		this.hourlyRate = hourlyRate;
+	}
 }

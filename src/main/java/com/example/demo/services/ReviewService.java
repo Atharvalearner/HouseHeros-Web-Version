@@ -27,7 +27,8 @@ public class ReviewService {
 	public Review addReview(String userEmail, Long bookingId, int rating, String comment) {
 		User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new RuntimeException("User not found"));
 
-		Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new RuntimeException("Booking not found"));
+		Booking booking = bookingRepository.findById(bookingId)
+				.orElseThrow(() -> new RuntimeException("Booking not found"));
 
 		if (!booking.getUser().getEmail().equals(userEmail)) {
 			throw new RuntimeException("You can review only your own bookings");
@@ -49,7 +50,8 @@ public class ReviewService {
 	}
 
 	public List<ReviewResponse> getReviewsForWorker(Long workerId) {
-		WorkerProfile worker = workerProfileRepository.findById(workerId).orElseThrow(() -> new RuntimeException("Worker not found"));
+		WorkerProfile worker = workerProfileRepository.findById(workerId)
+				.orElseThrow(() -> new RuntimeException("Worker not found"));
 
 		List<Review> reviews = reviewRepository.findByWorkerProfile(worker);
 
@@ -57,8 +59,20 @@ public class ReviewService {
 				r.getUser().getUsername(), r.getUser().getEmail())).toList();
 	}
 
-	private void updateWorkerAverageRating(WorkerProfile worker) {
+	@Transactional
+	public void deleteReview(Long reviewId) {
+		Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new RuntimeException("Review not found"));
+		WorkerProfile worker = review.getWorkerProfile();
+		reviewRepository.delete(review);
+		updateWorkerAverageRating(worker);
+	}
+
+	@Transactional
+	protected void updateWorkerAverageRating(WorkerProfile worker) {
 		List<Review> reviews = reviewRepository.findByWorkerProfile(worker);
-		double avg = reviews.stream().mapToInt(Review::getRating).average().orElse(0.0);
+		double avg = reviews.isEmpty() ? 0.0 : reviews.stream().mapToInt(Review::getRating).average().orElse(0.0);
+
+		worker.setAverageRating(avg);
+		workerProfileRepository.save(worker);
 	}
 }

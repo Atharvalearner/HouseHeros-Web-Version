@@ -14,28 +14,31 @@ import java.util.Map;
 @RequestMapping("/api/reviews")
 public class ReviewController {
 
-    private final ReviewService reviewService;
+	private final ReviewService reviewService;
 
-    public ReviewController(ReviewService reviewService) {
-        this.reviewService = reviewService;
-    }
+	public ReviewController(ReviewService reviewService) {
+		this.reviewService = reviewService;
+	}
 
-    // User adds a review after service completion
-    @PostMapping
-    public ResponseEntity<?> addReview(Authentication auth, @RequestBody Map<String, Object> request) {
-        String email = auth.getName();
-        Long bookingId = Long.valueOf(request.get("bookingId").toString());
-        int rating = (int) request.get("rating");
-        String comment = request.get("comment").toString();
+	// User adds a review after service completion
+	@PostMapping
+	public ResponseEntity<ReviewResponse> addReview(Authentication auth, @RequestBody Map<String, Object> request) {
+		String email = auth.getName();
+		Long bookingId = Long.valueOf(request.get("bookingId").toString());
+		int rating = (int) request.get("rating");
+		String comment = request.get("comment").toString();
 
-        Review review = reviewService.addReview(email, bookingId, rating, comment);
-        return ResponseEntity.ok(review);
-    }
+		Review review = reviewService.addReview(email, bookingId, rating, comment);
 
-    // Public endpoint: get reviews for a specific worker
-    @GetMapping("/worker/{workerId}")
-   	public ResponseEntity<List<ReviewResponse>> getReviews(@PathVariable Long workerId){
-        return ResponseEntity.ok(reviewService.getReviewsForWorker(workerId));
-        
-    }
+		ReviewResponse resp = new ReviewResponse(review.getId(), review.getRating(), review.getComment(), review.getCreatedAt(), review.getUser().getUsername(), review.getUser().getEmail());
+
+		return ResponseEntity.ok(resp);
+	}
+
+	// Public endpoint: get reviews for a specific worker
+	@GetMapping("/worker/{workerId}")
+	public ResponseEntity<List<ReviewResponse>> getReviews(@PathVariable Long workerId) {
+		return ResponseEntity.ok(reviewService.getReviewsForWorker(workerId));
+
+	}
 }

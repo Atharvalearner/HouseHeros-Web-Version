@@ -4,6 +4,8 @@ import com.example.demo.models.User;
 import com.example.demo.models.WorkerProfile;
 import com.example.demo.repositories.UserRepository;
 import com.example.demo.repositories.WorkerProfileRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,8 +16,9 @@ import java.util.Optional;
 @Service
 public class WorkerProfileService {
 
-	private final WorkerProfileRepository workerProfileRepository;
-	private final UserRepository userRepository;
+	
+    private WorkerProfileRepository workerProfileRepository;
+	private UserRepository userRepository;
 
 	public WorkerProfileService(WorkerProfileRepository workerProfileRepository, UserRepository userRepository) {
 		this.workerProfileRepository = workerProfileRepository;
@@ -67,4 +70,8 @@ public class WorkerProfileService {
 		p.setUpdatedAt(Instant.now());
 		return workerProfileRepository.save(p);
 	}
+	
+	public List<WorkerProfile> searchWorkers(String city, String skill, Integer minExp, Double maxRate, Double minRating, String occupation) {
+        return workerProfileRepository.searchWorkers(city, skill, minExp, maxRate, minRating, occupation);
+    }
 }

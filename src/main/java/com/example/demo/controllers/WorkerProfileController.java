@@ -32,7 +32,7 @@ public class WorkerProfileController {
 	@GetMapping("/me")
 	public ResponseEntity<?> getMyProfile(Authentication authentication) {
 		User userDetails = (User) authentication.getPrincipal();
-		String email = userDetails.getUsername(); // ✅ fix applied here too
+		String email = userDetails.getUsername(); // 
 		return workerProfileService.getByUserEmail(email).map(ResponseEntity::ok)
 				.orElseGet(() -> ResponseEntity.notFound().build());
 	}
@@ -43,4 +43,17 @@ public class WorkerProfileController {
 		List<WorkerProfile> list = workerProfileService.getAllApproved();
 		return ResponseEntity.ok(list);
 	}
+	
+	@GetMapping("/search")
+    public ResponseEntity<List<WorkerProfile>> searchWorkers(
+            @RequestParam(required = false) String city,
+            @RequestParam(required = false) String skill,
+            @RequestParam(required = false) Integer minExp,
+            @RequestParam(required = false) Double maxRate,
+            @RequestParam(required = false) Double minRating,
+            @RequestParam(required = false) String occupation) {
+
+        List<WorkerProfile> workers = workerProfileService.searchWorkers(city, skill, minExp, maxRate, minRating, occupation);
+        return ResponseEntity.ok(workers);
+    }
 }
