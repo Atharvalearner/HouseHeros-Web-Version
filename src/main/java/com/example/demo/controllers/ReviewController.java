@@ -20,7 +20,6 @@ public class ReviewController {
 		this.reviewService = reviewService;
 	}
 
-	// User adds a review after service completion
 	@PostMapping
 	public ResponseEntity<ReviewResponse> addReview(Authentication auth, @RequestBody Map<String, Object> request) {
 		String email = auth.getName();
@@ -30,7 +29,8 @@ public class ReviewController {
 
 		Review review = reviewService.addReview(email, bookingId, rating, comment);
 
-		ReviewResponse resp = new ReviewResponse(review.getId(), review.getRating(), review.getComment(), review.getCreatedAt(), review.getUser().getUsername(), review.getUser().getEmail());
+		ReviewResponse resp = new ReviewResponse(review.getId(), review.getRating(), review.getComment(),
+				review.getCreatedAt(), review.getUser().getUsername(), review.getUser().getEmail());
 
 		return ResponseEntity.ok(resp);
 	}
@@ -41,4 +41,17 @@ public class ReviewController {
 		return ResponseEntity.ok(reviewService.getReviewsForWorker(workerId));
 
 	}
+
+	@PutMapping("/{reviewId}")
+	public ResponseEntity<ReviewResponse> updateReview(Authentication auth, @PathVariable Long reviewId, @RequestBody Map<String, Object> request) {
+		String email = auth.getName();
+		Integer rating = request.get("rating") != null ? (Integer) request.get("rating") : null;
+		String comment = request.get("comment") != null ? request.get("comment").toString() : null;
+
+		Review updated = reviewService.updateReview(email, reviewId, rating, comment);
+		ReviewResponse resp = new ReviewResponse(updated.getId(), updated.getRating(), updated.getComment(),
+				updated.getCreatedAt(), updated.getUser().getUsername(), updated.getUser().getEmail());
+		return ResponseEntity.ok(resp);
+	}
+
 }

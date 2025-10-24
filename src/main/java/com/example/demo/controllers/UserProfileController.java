@@ -18,12 +18,21 @@ public class UserProfileController {
 	}
 
 	@PostMapping
-	public ResponseEntity<UserProfile> createOrUpdate(Authentication authentication, @RequestBody UserProfile payload) {
+	public ResponseEntity<UserProfile> createProfile(Authentication authentication, @RequestBody UserProfile payload) {
 		User userDetails = (User) authentication.getPrincipal();
 		String email = userDetails.getUsername();
-		UserProfile saved = userProfileService.createOrUpdateProfile(email, payload);
+		UserProfile saved = userProfileService.createProfile(email, payload);
 		return ResponseEntity.ok(saved);
 	}
+	
+	@PutMapping
+	public ResponseEntity<UserProfile> updateProfile(Authentication authentication, @RequestBody UserProfile payload) {
+	    User userDetails = (User) authentication.getPrincipal();
+	    String email = userDetails.getUsername();
+	    UserProfile updated = userProfileService.updateProfile(email, payload);
+	    return ResponseEntity.ok(updated);
+	}
+
 
 	@GetMapping("/me")
 	public ResponseEntity<?> getMyProfile(Authentication authentication) {

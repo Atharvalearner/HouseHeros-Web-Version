@@ -67,9 +67,4 @@ public class AuthController {
             throw new RuntimeException("Invalid login credentials");
         }
     }
-    
-    @GetMapping("/hello")
-    public String helloSecure() {
-        return "Welcome to the protected route!";
-    }
 }

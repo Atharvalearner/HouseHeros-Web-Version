@@ -19,14 +19,20 @@ public class WorkerProfileController {
 		this.workerProfileService = workerProfileService;
 	}
 
-	// Create or update: only for authenticated workers
 	@PostMapping
-	public ResponseEntity<WorkerProfile> createOrUpdateProfile(Authentication authentication,@RequestBody WorkerProfile payload) {
-
+	public ResponseEntity<WorkerProfile> createProfile(Authentication authentication,@RequestBody WorkerProfile payload) {
 		User userDetails = (User) authentication.getPrincipal();
 		String email = userDetails.getUsername(); 
-		WorkerProfile saved = workerProfileService.createOrUpdateProfile(email, payload);
+		WorkerProfile saved = workerProfileService.createProfile(email, payload);
 		return ResponseEntity.ok(saved);
+	}
+	
+	@PutMapping
+	public ResponseEntity<WorkerProfile> updateProfile(Authentication authentication, @RequestBody WorkerProfile payload) {
+	    User userDetails = (User) authentication.getPrincipal();
+	    String email = userDetails.getUsername();
+	    WorkerProfile updated = workerProfileService.updateProfile(email, payload);
+	    return ResponseEntity.ok(updated);
 	}
 
 	@GetMapping("/me")

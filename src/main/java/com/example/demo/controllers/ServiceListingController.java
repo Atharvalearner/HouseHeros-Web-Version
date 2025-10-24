@@ -17,6 +17,12 @@ public class ServiceListingController {
     public ResponseEntity<ServiceListing> createService(@PathVariable Long workerId, @RequestBody ServiceListing listing) {
         return ResponseEntity.ok(service.createListing(workerId, listing));
     }
+    
+    @PutMapping("/{id}")
+    public ResponseEntity<ServiceListing> updateService(@PathVariable Long id, @RequestBody ServiceListing payload) {
+        ServiceListing updated = service.updateListing(id, payload);
+        return ResponseEntity.ok(updated);
+    }
 
     @GetMapping
     public ResponseEntity<List<ServiceListing>> getAllServices() {

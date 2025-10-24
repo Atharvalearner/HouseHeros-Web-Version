@@ -21,7 +21,7 @@ public class BookingController {
 	}
 
 	@PostMapping("/{serviceId}")
-	public ResponseEntity<Booking> createBooking(Authentication auth, @PathVariable Long serviceId, @RequestParam("date") String date) {
+	public ResponseEntity<Booking> bookService(Authentication auth, @PathVariable Long serviceId, @RequestParam("date") String date) {
 		User userDetails = (User) auth.getPrincipal();
 		String email = userDetails.getUsername();
 		LocalDateTime scheduledDate = LocalDateTime.parse(date);
@@ -44,4 +44,10 @@ public class BookingController {
 	public ResponseEntity<Booking> updateStatus(@PathVariable Long bookingId, @RequestParam String status) {
 		return ResponseEntity.ok(bookingService.updateStatus(bookingId, status));
 	}
+	
+	@PutMapping("/{id}")
+    public ResponseEntity<Booking> updateBooking(@PathVariable Long id, @RequestBody Booking payload) {
+        Booking updated = bookingService.updateBooking(id, payload);
+        return ResponseEntity.ok(updated);
+    }
 }

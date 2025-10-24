@@ -2,6 +2,9 @@ package com.example.demo.services;
 
 import com.example.demo.models.*;
 import com.example.demo.repositories.*;
+
+import jakarta.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,6 +34,19 @@ public class BookingService {
 		return bookingRepo.save(booking);
 	}
 
+	@Transactional
+    public Booking updateBooking(Long bookingId, Booking payload) {
+        Booking existing = bookingRepo.findById(bookingId).orElseThrow(() -> new RuntimeException("Booking not found"));
+
+        if (payload.getBookingDate() != null) existing.setBookingDate(payload.getBookingDate());
+        if (payload.getStatus() != null) existing.setStatus(payload.getStatus());
+        if (payload.getService() != null) {
+            ServiceListing service = serviceRepo.findById(payload.getService().getId()).orElseThrow(() -> new RuntimeException("Service not found"));
+            existing.setService(service);
+        }
+        return bookingRepo.save(existing);
+    }
+	
 	public List<Booking> getUserBookings(String userEmail) {
 		User user = userRepo.findByEmail(userEmail).orElseThrow(() -> new RuntimeException("User not found"));
 		return bookingRepo.findByUser(user);

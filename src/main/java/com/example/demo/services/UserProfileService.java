@@ -21,9 +21,8 @@ public class UserProfileService {
 	}
 
 	@Transactional
-	public UserProfile createOrUpdateProfile(String userEmail, UserProfile payload) {
+	public UserProfile createProfile(String userEmail, UserProfile payload) {
 		User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new RuntimeException("User not found"));
-
 		Optional<UserProfile> existing = userProfileRepository.findByUser(user);
 		UserProfile profile = existing.orElseGet(UserProfile::new);
 
@@ -34,6 +33,19 @@ public class UserProfileService {
 		profile.setCity(payload.getCity());
 
 		return userProfileRepository.save(profile);
+	}
+	
+	@Transactional
+	public UserProfile updateProfile(String userEmail, UserProfile payload) {
+	    User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new RuntimeException("User not found"));
+	    UserProfile profile = userProfileRepository.findByUser(user).orElseThrow(() -> new RuntimeException("Profile not found"));
+
+	    // Update only fields that are provided
+	    if (payload.getFullName() != null) profile.setFullName(payload.getFullName());
+	    if (payload.getPhone() != null) profile.setPhone(payload.getPhone());
+	    if (payload.getAddress() != null) profile.setAddress(payload.getAddress());
+	    if (payload.getCity() != null) profile.setCity(payload.getCity());
+	    return userProfileRepository.save(profile);
 	}
 
 	public Optional<UserProfile> getByUserEmail(String userEmail) {

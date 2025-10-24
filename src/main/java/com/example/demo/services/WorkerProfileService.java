@@ -26,7 +26,7 @@ public class WorkerProfileService {
 	}
 
 	@Transactional
-	public WorkerProfile createOrUpdateProfile(String userEmail, WorkerProfile payload) {
+	public WorkerProfile createProfile(String userEmail, WorkerProfile payload) {
 		User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new RuntimeException("User not found"));
 
 		Optional<WorkerProfile> existing = workerProfileRepository.findByUser(user);
@@ -50,6 +50,27 @@ public class WorkerProfileService {
 
 		return workerProfileRepository.save(profile);
 	}
+	
+	@Transactional
+	public WorkerProfile updateProfile(String userEmail, WorkerProfile payload) {
+	    User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new RuntimeException("User not found"));
+	    WorkerProfile profile = workerProfileRepository.findByUser(user).orElseThrow(() -> new RuntimeException("Profile not found"));
+
+	    if (payload.getFullName() != null) profile.setFullName(payload.getFullName());
+	    if (payload.getOccupation() != null) profile.setOccupation(payload.getOccupation());
+	    if (payload.getExperienceYears() != null) profile.setExperienceYears(payload.getExperienceYears());
+	    if (payload.getSkills() != null) profile.setSkills(payload.getSkills());
+	    if (payload.getPhone() != null) profile.setPhone(payload.getPhone());
+	    if (payload.getAddress() != null) profile.setAddress(payload.getAddress());
+	    if (payload.getCity() != null) profile.setCity(payload.getCity());
+	    if (payload.getDescription() != null) profile.setDescription(payload.getDescription());
+	    if (payload.getImageUrl() != null) profile.setImageUrl(payload.getImageUrl());
+
+	    profile.setIsApproved(false);		 // Any update requires re-approval
+	    profile.setUpdatedAt(Instant.now());
+	    return workerProfileRepository.save(profile);
+	}
+
 
 	public Optional<WorkerProfile> getByUserEmail(String userEmail) {
 		return userRepository.findByEmail(userEmail).flatMap(workerProfileRepository::findByUser);
