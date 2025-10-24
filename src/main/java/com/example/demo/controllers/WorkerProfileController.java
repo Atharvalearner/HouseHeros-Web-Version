@@ -55,7 +55,7 @@ public class WorkerProfileController {
             @RequestParam(required = false) String city,
             @RequestParam(required = false) String skill,
             @RequestParam(required = false) Integer minExp,
-            @RequestParam(required = false) Double maxRate,
+            @RequestParam(required = false) Integer maxRate,
             @RequestParam(required = false) Double minRating,
             @RequestParam(required = false) String occupation) {
 

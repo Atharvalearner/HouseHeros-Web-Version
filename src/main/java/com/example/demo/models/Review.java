@@ -1,6 +1,7 @@
 package com.example.demo.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,36 +13,37 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Getter
 @Setter
 @Table(name = "reviews")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class Review {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    private int rating; 
+	@NotNull(message = "Rating is required")
+	@Min(value = 1, message = "Rating cannot be less than 1")
+	@Max(value = 5, message = "Rating cannot be greater than 5")
+	private int rating;
 
-    @Column(length = 1000)
-    private String comment;
+	@NotBlank(message = "Comment is required")
+	@Size(max = 1000, message = "Comment cannot exceed 1000 characters")
+	private String comment;
 
-    private Instant createdAt = Instant.now();
+	private Instant createdAt = Instant.now();
 
-    // Reviewer (User who gave review)
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    @JsonIgnoreProperties({"reviews", "workerProfile", "hibernateLazyInitializer", "handler"})
-    private User user;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id")
+	@JsonIgnoreProperties({ "reviews", "workerProfile", "hibernateLazyInitializer", "handler" })
+	private User user; // Reviewer (User who gave review)
 
-    // Reviewed worker profile
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "worker_id")
-    @JsonIgnoreProperties({"reviews", "user", "hibernateLazyInitializer", "handler"})
-    private WorkerProfile workerProfile;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "worker_id")
+	@JsonIgnoreProperties({ "reviews", "user", "hibernateLazyInitializer", "handler" })
+	private WorkerProfile workerProfile; // Reviewed worker profile
 
-    // Optional booking reference
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "booking_id")
-    private Booking booking;
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "booking_id")
+	private Booking booking; // Optional booking reference
 
 	public Long getId() {
 		return id;

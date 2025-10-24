@@ -28,7 +28,6 @@ public class ReviewController {
 		String comment = request.get("comment").toString();
 
 		Review review = reviewService.addReview(email, bookingId, rating, comment);
-
 		ReviewResponse resp = new ReviewResponse(review.getId(), review.getRating(), review.getComment(),
 				review.getCreatedAt(), review.getUser().getUsername(), review.getUser().getEmail());
 

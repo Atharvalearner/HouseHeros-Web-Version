@@ -1,5 +1,6 @@
 package com.example.demo.models;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Entity
@@ -15,6 +16,8 @@ public class ServiceListing {
     private String title;
     private String description;
     private double price;
+    
+    @NotBlank(message = "Category is required")
     private String category; // e.g., electrician, plumber, etc.
 
     @ManyToOne

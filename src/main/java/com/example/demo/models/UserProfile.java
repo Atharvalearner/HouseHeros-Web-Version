@@ -3,6 +3,7 @@ package com.example.demo.models;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,9 +18,16 @@ public class UserProfile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Full name is required")
     private String fullName;
+    
+    @NotBlank(message = "Phone Number is required")
     private String phone;
+    
+    @NotBlank(message = "Address is required")
     private String address;
+    
+    @NotBlank(message = "City is required")
     private String city;
 
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -73,7 +81,5 @@ public class UserProfile {
 
 	public void setUser(User user) {
 		this.user = user;
-	}
-    
-    
+	}  
 }

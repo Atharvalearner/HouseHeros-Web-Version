@@ -1,6 +1,7 @@
 package com.example.demo.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,19 +20,37 @@ public class WorkerProfile {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@NotBlank(message = "Full name is required")
 	private String fullName;
+
+	@NotBlank(message = "Occupation is required")
 	private String occupation;
+
+	@NotNull(message = "Experience in Years is required")
+	@Min(value = 0, message = "Experience years cannot be negative")
 	private Integer experienceYears;
-	private double hourlyRate;
+
+	@NotNull(message = "Hourly Charges is required")
+	@PositiveOrZero(message = "Hourly rate cannot be negative")
+	private Integer hourlyRate;
+
 	private double averageRating;
 
 	@Column(length = 1000)
+	@NotBlank(message = "Skills is required")
 	private String skills;
+
+	@NotBlank(message = "Phone number is required")
 	private String phone;
+
+	@NotBlank(message = "Address is required")
 	private String address;
+
+	@NotBlank(message = "City is required")
 	private String city;
 
 	@Column(length = 2000)
+	@Size(max = 2000, message = "Description cannot exceed 2000 characters")
 	private String description;
 	private String imageUrl;
 	private Boolean isApproved = false;
@@ -164,11 +183,11 @@ public class WorkerProfile {
 		this.averageRating = averageRating;
 	}
 
-	public double getHourlyRate() {
+	public int getHourlyRate() {
 		return hourlyRate;
 	}
 
-	public void setHourlyRate(double hourlyRate) {
+	public void setHourlyRate(int hourlyRate) {
 		this.hourlyRate = hourlyRate;
 	}
 }

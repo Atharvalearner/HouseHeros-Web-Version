@@ -54,7 +54,6 @@ public class ReviewService {
 	    if (!review.getUser().getEmail().equals(userEmail)) {
 	        throw new RuntimeException("You are not allowed to update this review");
 	    }
-
 	    if (newRating != null) review.setRating(newRating);
 	    if (newComment != null && !newComment.trim().isEmpty()) review.setComment(newComment);
 

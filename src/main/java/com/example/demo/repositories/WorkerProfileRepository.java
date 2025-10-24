@@ -13,7 +13,7 @@ public interface WorkerProfileRepository extends JpaRepository<WorkerProfile, Lo
     List<WorkerProfile> findByIsApprovedTrue();    										// for public listing
     List<WorkerProfile> findByCityContainingIgnoreCaseAndSkillsContainingIgnoreCase(String city, String skills);
     List<WorkerProfile> findByExperienceYearsGreaterThanEqual(int experienceYears);
-    List<WorkerProfile> findByHourlyRateBetween(double minRate, double maxRate);	 	
+    List<WorkerProfile> findByHourlyRateBetween(int minRate, int maxRate);	 	
     List<WorkerProfile> findByAverageRatingGreaterThanEqual(double rating);  
     List<WorkerProfile> findByOccupation(String occupation);
 
@@ -31,7 +31,7 @@ public interface WorkerProfileRepository extends JpaRepository<WorkerProfile, Lo
         List<WorkerProfile> searchWorkers(@Param("city") String city,
                                           @Param("skills") String skills,
                                           @Param("minExp") Integer minExp,
-                                          @Param("maxRate") Double maxRate,
+                                          @Param("maxRate") Integer maxRate,
                                           @Param("minRating") Double minRating,
         								  @Param("occupation") String occupation);
 }
