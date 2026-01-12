@@ -38,9 +38,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
                         .requestMatchers("/api/worker/**").hasAuthority("WORKER")
                         .requestMatchers("/api/user/**").hasAuthority("USER")
+                        .requestMatchers("/api/user/profile/**").authenticated()
                         .requestMatchers("/api/reviews/**").permitAll()
-                        .requestMatchers("/api/worker/profile/public").permitAll()   // public listing
-                        .anyRequest().authenticated()
+                        .requestMatchers("/api/worker/profile/public").permitAll()   
+                	    .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .userDetailsService(userDetailsService)

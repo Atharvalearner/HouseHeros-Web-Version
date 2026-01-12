@@ -10,14 +10,12 @@ import java.util.Optional;
 
 public interface WorkerProfileRepository extends JpaRepository<WorkerProfile, Long> {
     Optional<WorkerProfile> findByUser(User user);
-    List<WorkerProfile> findByIsApprovedTrue();    										// for public listing
     List<WorkerProfile> findByCityContainingIgnoreCaseAndSkillsContainingIgnoreCase(String city, String skills);
     List<WorkerProfile> findByExperienceYearsGreaterThanEqual(int experienceYears);
     List<WorkerProfile> findByHourlyRateBetween(int minRate, int maxRate);	 	
     List<WorkerProfile> findByAverageRatingGreaterThanEqual(double rating);  
     List<WorkerProfile> findByOccupation(String occupation);
-
-    // Combine filters using @Query
+    
     @Query("""
             SELECT w FROM WorkerProfile w
             WHERE (:city IS NULL OR LOWER(w.city) LIKE LOWER(CONCAT('%', :city, '%')))
@@ -26,8 +24,8 @@ public interface WorkerProfileRepository extends JpaRepository<WorkerProfile, Lo
             AND (:maxRate IS NULL OR w.hourlyRate <= :maxRate)
             AND (:minRating IS NULL OR w.averageRating >= :minRating)
             AND (:occupation IS NULL OR LOWER(w.occupation) LIKE LOWER(CONCAT('%', :occupation, '%')))
-            AND w.isApproved = true
         """)
+
         List<WorkerProfile> searchWorkers(@Param("city") String city,
                                           @Param("skills") String skills,
                                           @Param("minExp") Integer minExp,

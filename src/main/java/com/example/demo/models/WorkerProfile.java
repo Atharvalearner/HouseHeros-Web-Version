@@ -2,23 +2,20 @@ package com.example.demo.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.time.Instant;
+import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-@Getter
-@Setter
 @Table(name = "worker_profiles")
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler", "user" })
 public class WorkerProfile {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private long id;
 
 	@NotBlank(message = "Full name is required")
 	private String fullName;
@@ -28,11 +25,11 @@ public class WorkerProfile {
 
 	@NotNull(message = "Experience in Years is required")
 	@Min(value = 0, message = "Experience years cannot be negative")
-	private Integer experienceYears;
+	private int experienceYears;
 
 	@NotNull(message = "Hourly Charges is required")
 	@PositiveOrZero(message = "Hourly rate cannot be negative")
-	private Integer hourlyRate;
+	private int hourlyRate;
 
 	private double averageRating;
 
@@ -53,16 +50,20 @@ public class WorkerProfile {
 	@Size(max = 2000, message = "Description cannot exceed 2000 characters")
 	private String description;
 	private String imageUrl;
-	private Boolean isApproved = false;
 
-	private Instant createdAt = Instant.now();
-	private Instant updatedAt = Instant.now();
+	@Column(name = "created_at")
+	private Date createdAt;
+
+	@Column(name = "updated_at")
+	private Date updatedAt;
 
 	@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", unique = true)
 	private User user;
 
+//	private Boolean isApproved = true;
+	
 	public Long getId() {
 		return id;
 	}
@@ -143,29 +144,13 @@ public class WorkerProfile {
 		this.imageUrl = imageUrl;
 	}
 
-	public Boolean getIsApproved() {
-		return isApproved;
-	}
-
-	public void setIsApproved(Boolean isApproved) {
-		this.isApproved = isApproved;
-	}
-
-	public Instant getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(Instant createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	public Instant getUpdatedAt() {
-		return updatedAt;
-	}
-
-	public void setUpdatedAt(Instant updatedAt) {
-		this.updatedAt = updatedAt;
-	}
+//	public Boolean getIsApproved() {
+//		return isApproved;
+//	}
+//
+//	public void setIsApproved(Boolean isApproved) {
+//		this.isApproved = isApproved;
+//	}
 
 	public User getUser() {
 		return user;
@@ -189,5 +174,25 @@ public class WorkerProfile {
 
 	public void setHourlyRate(int hourlyRate) {
 		this.hourlyRate = hourlyRate;
+	}
+
+	public void setHourlyRate(Integer hourlyRate) {
+		this.hourlyRate = hourlyRate;
+	}
+
+	public Date getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public Date getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(Date updatedAt) {
+		this.updatedAt = updatedAt;
 	}
 }

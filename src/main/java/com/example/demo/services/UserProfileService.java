@@ -1,54 +1,75 @@
 package com.example.demo.services;
 
-import com.example.demo.models.User;
-import com.example.demo.models.UserProfile;
-import com.example.demo.repositories.UserProfileRepository;
+import com.example.demo.models.*;
+import com.example.demo.repositories.UserProfileJPARepository;
 import com.example.demo.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.Optional;
 
 @Service
 public class UserProfileService {
 
-	private final UserProfileRepository userProfileRepository;
+	private final UserProfileJPARepository userProfileJPARepository;
 	private final UserRepository userRepository;
 
-	public UserProfileService(UserProfileRepository userProfileRepository, UserRepository userRepository) {
-		this.userProfileRepository = userProfileRepository;
+	public UserProfileService(UserProfileJPARepository userProfileJPARepository, UserRepository userRepository) {
+		this.userProfileJPARepository = userProfileJPARepository;
 		this.userRepository = userRepository;
 	}
 
 	@Transactional
-	public UserProfile createProfile(String userEmail, UserProfile payload) {
+	public void createProfile(String userEmail, CreateUserProfileRequest createUserProfileRequest) {
 		User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new RuntimeException("User not found"));
-		Optional<UserProfile> existing = userProfileRepository.findByUser(user);
+		Optional<UserProfile> existing = userProfileJPARepository.findByUser(user);
+
 		UserProfile profile = existing.orElseGet(UserProfile::new);
-
 		profile.setUser(user);
-		profile.setFullName(payload.getFullName());
-		profile.setPhone(payload.getPhone());
-		profile.setAddress(payload.getAddress());
-		profile.setCity(payload.getCity());
-
-		return userProfileRepository.save(profile);
+		profile.setFullName(createUserProfileRequest.getFullName());
+		profile.setPhone(createUserProfileRequest.getPhone());
+		profile.setAddress(createUserProfileRequest.getAddress());
+		profile.setCity(createUserProfileRequest.getCity());
+		profile.setUpdatedAt(new Date());
+		userProfileJPARepository.save(profile);
 	}
 	
 	@Transactional
-	public UserProfile updateProfile(String userEmail, UserProfile payload) {
-	    User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new RuntimeException("User not found"));
-	    UserProfile profile = userProfileRepository.findByUser(user).orElseThrow(() -> new RuntimeException("Profile not found"));
+	public UpdateUserProfileResponse updateProfile(String userEmail,UpdateUserProfileRequest updateUserProfileRequest) throws Exception  {
+		User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new RuntimeException("User not found"));
+		UserProfile profile = userProfileJPARepository.findByUser(user).orElseThrow(() -> new RuntimeException("UserProfile not found"));
 
-	    // Update only fields that are provided
-	    if (payload.getFullName() != null) profile.setFullName(payload.getFullName());
-	    if (payload.getPhone() != null) profile.setPhone(payload.getPhone());
-	    if (payload.getAddress() != null) profile.setAddress(payload.getAddress());
-	    if (payload.getCity() != null) profile.setCity(payload.getCity());
-	    return userProfileRepository.save(profile);
+		if (updateUserProfileRequest.getFullName() != null && !updateUserProfileRequest.getFullName().isBlank()) {
+			profile.setFullName(updateUserProfileRequest.getFullName());
+		}
+		if (updateUserProfileRequest.getPhone() != null && !updateUserProfileRequest.getPhone().isBlank()) {
+			profile.setPhone(updateUserProfileRequest.getPhone());
+		}
+		if (updateUserProfileRequest.getAddress() != null && !updateUserProfileRequest.getAddress().isBlank()) {
+			profile.setAddress(updateUserProfileRequest.getAddress());
+		}
+		if (updateUserProfileRequest.getCity() != null && !updateUserProfileRequest.getCity().isBlank()) {
+			profile.setCity(updateUserProfileRequest.getCity());
+		}
+		profile.setUpdatedAt(new Date());
+
+		UserProfile savedProfile = userProfileJPARepository.save(profile);
+
+		UpdateUserProfileResponse resp = new UpdateUserProfileResponse();
+		resp.setId(savedProfile.getId());
+		resp.setFullName(savedProfile.getFullName());
+		resp.setPhone(savedProfile.getPhone());
+		resp.setAddress(savedProfile.getAddress());
+		resp.setCity(savedProfile.getCity());
+		resp.setUser(savedProfile.getUser());
+		resp.setCreatedAt(savedProfile.getCreatedAt());
+		resp.setUpdatedAt(savedProfile.getUpdatedAt());
+
+		return resp;
 	}
 
-	public Optional<UserProfile> getByUserEmail(String userEmail) {
-		return userRepository.findByEmail(userEmail).flatMap(userProfileRepository::findByUser);
+	public Optional<UserProfile> getUserByUserEmail(String userEmail) {
+		return userRepository.findByEmail(userEmail).flatMap(userProfileJPARepository::findByUser);
 	}
 }

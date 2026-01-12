@@ -1,5 +1,8 @@
 package com.example.demo.services;
 
+import java.util.Collections;
+
+import org.springframework.security.core.authority.*;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,9 +21,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		User user = userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+		User user = userRepository.findByEmail(username)
+				.orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
-		return org.springframework.security.core.userdetails.User.withUsername(user.getEmail())
-				.password(user.getPassword()).authorities(user.getRole()).build();
+		return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(),
+				Collections.singleton(new SimpleGrantedAuthority(user.getRole())) // USER, WORKER, ADMIN
+		);
+
+//		return org.springframework.security.core.userdetails.User.withUsername(user.getEmail())
+//				.password(user.getPassword()).authorities(user.getRole()).build();
 	}
 }

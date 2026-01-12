@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,12 +43,7 @@ public class WorkerProfileService {
 		profile.setCity(payload.getCity());
 		profile.setDescription(payload.getDescription());
 		profile.setImageUrl(payload.getImageUrl());
-		profile.setUpdatedAt(Instant.now());
-
-		// When editing, mark as not approved until admin re-approves
-		if (existing.isPresent())
-			profile.setIsApproved(false);
-
+		profile.setUpdatedAt(new Date());
 		return workerProfileRepository.save(profile);
 	}
 
@@ -77,30 +73,21 @@ public class WorkerProfileService {
 		if (payload.getImageUrl() != null)
 			profile.setImageUrl(payload.getImageUrl());
 
-		profile.setIsApproved(false); // Any update requires re-approval
-		profile.setUpdatedAt(Instant.now());
+		profile.setUpdatedAt(new Date());
 		return workerProfileRepository.save(profile);
 	}
 
 	public Optional<WorkerProfile> getByUserEmail(String userEmail) {
 		return userRepository.findByEmail(userEmail).flatMap(workerProfileRepository::findByUser);
 	}
+	
 
-	public List<WorkerProfile> getAllApproved() {
-		return workerProfileRepository.findByIsApprovedTrue();
-	}
-
-	public List<WorkerProfile> getAllForAdmin() {
-		return workerProfileRepository.findAll();
-	}
-
-	@Transactional
-	public WorkerProfile approveProfile(Long profileId, boolean approve) {
-		WorkerProfile p = workerProfileRepository.findById(profileId).orElseThrow(() -> new RuntimeException("Profile not found"));
-		p.setIsApproved(approve);
-		p.setUpdatedAt(Instant.now());
-		return workerProfileRepository.save(p);
-	}
+//	@Transactional
+//	public WorkerProfile approveProfile(Long profileId, boolean approve) {
+//		WorkerProfile p = workerProfileRepository.findById(profileId).orElseThrow(() -> new RuntimeException("Profile not found"));
+//		p.setUpdatedAt(Instant.now());
+//		return workerProfileRepository.save(p);
+//	}
 
 	public List<WorkerProfile> searchWorkers(String city, String skill, Integer minExp, Integer maxRate, Double minRating, String occupation) {
 		return workerProfileRepository.searchWorkers(city, skill, minExp, maxRate, minRating, occupation);
