@@ -1,53 +1,53 @@
 package com.example.demo.controllers;
 
 import com.example.demo.Entities.Booking;
+import com.example.demo.models.*;
 import com.example.demo.services.BookingService;
+import com.example.demo.utils.SecurityUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/bookings")
 public class BookingController {
 
-	private final BookingService bookingService;
-
-	public BookingController(BookingService bookingService) {
-		this.bookingService = bookingService;
-	}
+	@Autowired
+	private BookingService bookingService;
 
 	@PostMapping("/{serviceId}")
-	public ResponseEntity<Booking> bookService(Authentication auth, @PathVariable Long serviceId, @RequestParam("date") String date) {
-		User userDetails = (User) auth.getPrincipal();
-		String email = userDetails.getUsername();
-		LocalDateTime scheduledDate = LocalDateTime.parse(date);
-		return ResponseEntity.ok(bookingService.createBooking(email, serviceId, scheduledDate));
+	public Map<String, Object> createBookingForService(@RequestBody BookingServiceRequest bookingServiceRequest) throws Exception {
+		String email = SecurityUtil.getCurrentUserEmail();
+		return bookingService.createBookingForService(email, bookingServiceRequest.getServiceId(), bookingServiceRequest.getScheduledDate());
 	}
 
 	@GetMapping("/user")
-	public ResponseEntity<List<Booking>> getUserBookings(Authentication auth) {
-		User userDetails = (User) auth.getPrincipal();
-		String email = userDetails.getUsername();
-		return ResponseEntity.ok(bookingService.getUserBookings(email));
+	public Map<String, Object> getUserBookings() throws Exception {
+		String email = SecurityUtil.getCurrentUserEmail();
+		return bookingService.getUserBookings(email);
 	}
 
 	@GetMapping("/worker/{workerId}")
-	public ResponseEntity<List<Booking>> getWorkerBookings(@PathVariable Long workerId) {
-		return ResponseEntity.ok(bookingService.getWorkerBookings(workerId));
+	public Map<String, Object> getWorkerBookings(GetWorkerBookingRequest getWorkerBookingRequest) throws Exception {
+		return bookingService.getWorkerBookings(getWorkerBookingRequest);
 	}
 
 	@PutMapping("/{bookingId}/status")
-	public ResponseEntity<Booking> updateStatus(@PathVariable Long bookingId, @RequestParam String status) {
-		return ResponseEntity.ok(bookingService.updateStatus(bookingId, status));
+	public boolean updateStatus(@RequestBody UpdateBookingStatusRequest updateBookingStatusRequest) throws Exception {
+		bookingService.updateStatus(updateBookingStatusRequest);
+		return true;
 	}
 	
 	@PutMapping("/{id}")
-    public ResponseEntity<Booking> updateBooking(@PathVariable Long id, @RequestBody Booking payload) {
-        Booking updated = bookingService.updateBooking(id, payload);
-        return ResponseEntity.ok(updated);
+    public boolean updateBooking(@RequestBody UpdateBookingForServiceRequest updateBookingForServiceRequest) throws Exception {
+        bookingService.updateBooking(updateBookingForServiceRequest);
+		return true;
     }
 }

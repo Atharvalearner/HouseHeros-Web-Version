@@ -4,27 +4,40 @@ import com.example.demo.Entities.Booking;
 import com.example.demo.Entities.ServiceListing;
 import com.example.demo.Entities.User;
 import com.example.demo.Entities.WorkerProfile;
-import com.example.demo.repositories.*;
+import com.example.demo.constants.BookingStatus;
+import com.example.demo.models.CreateBookingForServiceResponse;
 
-import jakarta.transaction.Transactional;
-
+import com.example.demo.models.GetWorkerBookingRequest;
+import com.example.demo.models.UpdateBookingForServiceRequest;
+import com.example.demo.models.UpdateBookingStatusRequest;
+import com.example.demo.repositories.BookingRepository;
+import com.example.demo.repositories.ServiceListingRepository;
+import com.example.demo.repositories.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class BookingService {
-	private final BookingRepository bookingRepo;
-	private final UserRepository userRepo;
-	private final ServiceListingRepository serviceRepo;
+	public final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-	public BookingService(BookingRepository bookingRepo, UserRepository userRepo, ServiceListingRepository serviceRepo) {
-		this.bookingRepo = bookingRepo;
-		this.userRepo = userRepo;
-		this.serviceRepo = serviceRepo;
-	}
+	@Autowired
+	private BookingRepository bookingRepo;
 
-	public Booking createBooking(String userEmail, Long serviceId, LocalDateTime date) {
+	@Autowired
+	private UserRepository userRepo;
+
+	@Autowired
+	private ServiceListingRepository serviceRepo;
+
+	@Transactional
+	public Map<String, Object> createBookingForService(String userEmail, Long serviceId, Date date) throws  Exception {
 		User user = userRepo.findByEmail(userEmail).orElseThrow(() -> new RuntimeException("User not found"));
 		ServiceListing service = serviceRepo.findById(serviceId).orElseThrow(() -> new RuntimeException("Service not found"));
 
@@ -32,38 +45,47 @@ public class BookingService {
 		booking.setUser(user);
 		booking.setService(service);
 		booking.setScheduledDate(date);
-		booking.setStatus("PENDING");
+		booking.setStatus(BookingStatus.PENDING);
+		booking.setBookingDate(new Date());
+		booking.setCreatedDate(new Date());
+		booking.setUpdatedDate(new Date());
+		bookingRepo.save(booking);
 
-		return bookingRepo.save(booking);
+		CreateBookingForServiceResponse response = OBJECT_MAPPER.convertValue(booking, CreateBookingForServiceResponse.class);
+		return Collections.singletonMap("createBookingForService", response);
 	}
 
 	@Transactional
-    public Booking updateBooking(Long bookingId, Booking payload) {
-        Booking existing = bookingRepo.findById(bookingId).orElseThrow(() -> new RuntimeException("Booking not found"));
+    public void updateBooking(UpdateBookingForServiceRequest updateBookingForServiceRequest) throws  Exception {
+        Booking existingBooking = bookingRepo.findById(updateBookingForServiceRequest.getBookingId()).orElseThrow(() -> new RuntimeException("Booking not found"));
 
-        if (payload.getBookingDate() != null) existing.setBookingDate(payload.getBookingDate());
-        if (payload.getStatus() != null) existing.setStatus(payload.getStatus());
-        if (payload.getService() != null) {
-            ServiceListing service = serviceRepo.findById(payload.getService().getId()).orElseThrow(() -> new RuntimeException("Service not found"));
-            existing.setService(service);
-        }
-        return bookingRepo.save(existing);
+        if (updateBookingForServiceRequest.getBookingDate() != null) {
+			existingBooking.setBookingDate(updateBookingForServiceRequest.getBookingDate());
+		}
+        if (updateBookingForServiceRequest.getStatus() != null) {
+			existingBooking.setStatus(updateBookingForServiceRequest.getStatus());
+		}
+		if (updateBookingForServiceRequest.getScheduledDate() != null) {
+			existingBooking.setScheduledDate(updateBookingForServiceRequest.getScheduledDate());
+		}
+        bookingRepo.save(existingBooking);
     }
-	
-	public List<Booking> getUserBookings(String userEmail) {
+
+	@Transactional(readOnly = true)
+	public Map<String, Object> getUserBookings(String userEmail) throws Exception {
 		User user = userRepo.findByEmail(userEmail).orElseThrow(() -> new RuntimeException("User not found"));
-		return bookingRepo.findByUser(user);
+		return Collections.singletonMap("userBookings", bookingRepo.findByUser(user));
 	}
 
-	public List<Booking> getWorkerBookings(Long workerId) {
+	public Map<String, Object> getWorkerBookings(GetWorkerBookingRequest getWorkerBookingRequest) throws Exception {
 		WorkerProfile worker = new WorkerProfile();
-		worker.setId(workerId);
-		return bookingRepo.findByService_Worker(worker);
+		worker.setId(getWorkerBookingRequest.getWorkerId());
+		return Collections.singletonMap("workerBookings", bookingRepo.findByService_Worker(worker));
 	}
 
-	public Booking updateStatus(Long bookingId, String status) {
-		Booking booking = bookingRepo.findById(bookingId).orElseThrow(() -> new RuntimeException("Booking not found"));
-		booking.setStatus(status);
-		return bookingRepo.save(booking);
+	public void updateStatus(UpdateBookingStatusRequest updateBookingStatusRequest) throws Exception {
+		Booking booking = bookingRepo.findById(updateBookingStatusRequest.getBookingId()).orElseThrow(() -> new RuntimeException("Booking not found"));
+		booking.setStatus(updateBookingStatusRequest.getBookingStatus());
+		bookingRepo.save(booking);
 	}
 }
