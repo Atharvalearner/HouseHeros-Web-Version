@@ -1,8 +1,8 @@
 package com.example.demo.repositories;
 
-import com.example.demo.models.Booking;
-import com.example.demo.models.User;
-import com.example.demo.models.WorkerProfile;
+import com.example.demo.Entities.Booking;
+import com.example.demo.Entities.User;
+import com.example.demo.Entities.WorkerProfile;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

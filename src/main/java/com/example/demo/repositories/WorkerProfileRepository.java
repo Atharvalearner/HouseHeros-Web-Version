@@ -1,7 +1,7 @@
 package com.example.demo.repositories;
 
-import com.example.demo.models.WorkerProfile;
-import com.example.demo.models.User;
+import com.example.demo.Entities.WorkerProfile;
+import com.example.demo.Entities.User;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.jpa.repository.*;
 

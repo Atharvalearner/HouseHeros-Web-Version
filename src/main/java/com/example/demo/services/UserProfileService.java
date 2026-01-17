@@ -1,5 +1,7 @@
 package com.example.demo.services;
 
+import com.example.demo.Entities.User;
+import com.example.demo.Entities.UserProfile;
 import com.example.demo.models.*;
 import com.example.demo.repositories.UserProfileJPARepository;
 import com.example.demo.repositories.UserRepository;

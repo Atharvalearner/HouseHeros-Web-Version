@@ -1,5 +1,6 @@
 package com.example.demo.models;
 
+import com.example.demo.Entities.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
@@ -13,13 +14,13 @@ public class UpdateUserProfileResponse {
     private String phone;
     private String address;
     private String city;
+    private Date createdAt;
+    private Date updatedAt;
 
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", unique = true)
     private User user;
-    private Date createdAt;
-    private Date updatedAt;
 
     public long getId() {
         return id;

@@ -1,7 +1,10 @@
 package com.example.demo.controllers;
 
-import com.example.demo.models.WorkerProfile;
+import com.example.demo.models.UpdateWorkerProfileRequest;
+import com.example.demo.models.UpdateWorkerProfileResponse;
+import com.example.demo.Entities.WorkerProfile;
 import com.example.demo.services.WorkerProfileService;
+import com.example.demo.utils.SecurityUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
@@ -20,29 +23,22 @@ public class WorkerProfileController {
 	}
 
 	@PostMapping
-	public ResponseEntity<WorkerProfile> createProfile(Authentication authentication,
-			@RequestBody WorkerProfile payload) {
-		User userDetails = (User) authentication.getPrincipal();
-		String email = userDetails.getUsername();
-		WorkerProfile saved = workerProfileService.createProfile(email, payload);
-		return ResponseEntity.ok(saved);
+	public String createProfile(@RequestBody WorkerProfile payload) {
+		String email = SecurityUtil.getCurrentUserEmail();
+		workerProfileService.createProfile(email, payload);
+		return "Worker Profile created Successfully";
 	}
 
 	@PutMapping
-	public ResponseEntity<WorkerProfile> updateProfile(Authentication authentication,
-			@RequestBody WorkerProfile payload) {
-		User userDetails = (User) authentication.getPrincipal();
-		String email = userDetails.getUsername();
-		WorkerProfile updated = workerProfileService.updateProfile(email, payload);
-		return ResponseEntity.ok(updated);
+	public UpdateWorkerProfileResponse updateProfile(@RequestBody UpdateWorkerProfileRequest updateWorkerProfileRequest) {
+		String email = SecurityUtil.getCurrentUserEmail();
+		return workerProfileService.updateProfile(email, updateWorkerProfileRequest);
 	}
 
 	@GetMapping("/me")
-	public ResponseEntity<?> getMyProfile(Authentication authentication) {
-		User userDetails = (User) authentication.getPrincipal();
-		String email = userDetails.getUsername();
-		return workerProfileService.getByUserEmail(email).map(ResponseEntity::ok)
-				.orElseGet(() -> ResponseEntity.notFound().build());
+	public ResponseEntity<?> getMyProfile() {
+		String email = SecurityUtil.getCurrentUserEmail();
+		return workerProfileService.getByUserEmail(email).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
 	}
 
 	// Public: list all approved workers (for customers)
@@ -60,13 +56,11 @@ public class WorkerProfileController {
 //	}
 
 	@GetMapping("/search")
-	public ResponseEntity<List<WorkerProfile>> searchWorkers(@RequestParam(required = false) String city,
+	public List<WorkerProfile> searchWorkers(@RequestParam(required = false) String city,
 			@RequestParam(required = false) String skill, @RequestParam(required = false) Integer minExp,
 			@RequestParam(required = false) Integer maxRate, @RequestParam(required = false) Double minRating,
 			@RequestParam(required = false) String occupation) {
 
-		List<WorkerProfile> workers = workerProfileService.searchWorkers(city, skill, minExp, maxRate, minRating,
-				occupation);
-		return ResponseEntity.ok(workers);
+        return workerProfileService.searchWorkers(city, skill, minExp, maxRate, minRating, occupation);
 	}
 }

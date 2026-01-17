@@ -1,4 +1,4 @@
-package com.example.demo.models;
+package com.example.demo.Entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -73,6 +73,4 @@ public class Booking {
 	public void setService(ServiceListing service) {
 		this.service = service;
 	}
-    
-    
 }

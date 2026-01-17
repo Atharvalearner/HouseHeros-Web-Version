@@ -1,6 +1,6 @@
 package com.example.demo.controllers;
 
-import com.example.demo.models.Booking;
+import com.example.demo.Entities.Booking;
 import com.example.demo.services.BookingService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;

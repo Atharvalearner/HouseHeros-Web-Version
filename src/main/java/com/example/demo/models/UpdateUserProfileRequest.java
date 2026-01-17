@@ -1,11 +1,11 @@
 package com.example.demo.models;
 
+import com.example.demo.Entities.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
-import jakarta.validation.constraints.NotBlank;
 
 import java.util.Date;
 

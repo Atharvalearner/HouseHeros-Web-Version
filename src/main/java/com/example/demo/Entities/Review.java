@@ -1,4 +1,4 @@
-package com.example.demo.models;
+package com.example.demo.Entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;

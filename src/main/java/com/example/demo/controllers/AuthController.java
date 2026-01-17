@@ -1,6 +1,6 @@
 package com.example.demo.controllers;
 
-import com.example.demo.models.*;
+import com.example.demo.Entities.User;
 import com.example.demo.repositories.*;
 import com.example.demo.services.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;

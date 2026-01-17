@@ -1,6 +1,6 @@
 package com.example.demo.controllers;
 
-import com.example.demo.models.Review;
+import com.example.demo.Entities.Review;
 import com.example.demo.models.ReviewResponse;
 import com.example.demo.services.ReviewService;
 import org.springframework.http.ResponseEntity;

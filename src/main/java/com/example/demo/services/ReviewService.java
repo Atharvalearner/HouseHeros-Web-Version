@@ -1,5 +1,9 @@
 package com.example.demo.services;
 
+import com.example.demo.Entities.Booking;
+import com.example.demo.Entities.Review;
+import com.example.demo.Entities.User;
+import com.example.demo.Entities.WorkerProfile;
 import com.example.demo.models.*;
 import com.example.demo.repositories.*;
 import org.springframework.stereotype.Service;

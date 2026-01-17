@@ -1,8 +1,8 @@
 package com.example.demo.controllers;
+import com.example.demo.Entities.ServiceListing;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.example.demo.models.*;
 import com.example.demo.services.*;
 import java.util.*;
 
@@ -11,32 +11,32 @@ import java.util.*;
 public class ServiceListingController {
 
     @Autowired
-    private ServiceListingService service;
+    private ServiceListingService serviceListingService;
 
     @PostMapping("/worker/{workerId}")
-    public ResponseEntity<ServiceListing> createService(@PathVariable Long workerId, @RequestBody ServiceListing listing) {
-        return ResponseEntity.ok(service.createListing(workerId, listing));
+    public ResponseEntity<ServiceListing> createServiceByWorker(@PathVariable Long workerId, @RequestBody ServiceListing listing) {
+        return ResponseEntity.ok(serviceListingService.createListing(workerId, listing));
     }
     
     @PutMapping("/{id}")
     public ResponseEntity<ServiceListing> updateService(@PathVariable Long id, @RequestBody ServiceListing payload) {
-        ServiceListing updated = service.updateListing(id, payload);
+        ServiceListing updated = serviceListingService.updateListing(id, payload);
         return ResponseEntity.ok(updated);
     }
 
-    @GetMapping
-    public ResponseEntity<List<ServiceListing>> getAllServices() {
-        return ResponseEntity.ok(service.getAllServices());
+    @GetMapping("")
+    public List<ServiceListing> getAllServices() {
+        return serviceListingService.getAllServices();
     }
 
     @GetMapping("/worker/{workerId}")
     public ResponseEntity<List<ServiceListing>> getByWorker(@PathVariable Long workerId) {
-        return ResponseEntity.ok(service.getServicesByWorker(workerId));
+        return ResponseEntity.ok(serviceListingService.getServicesByWorker(workerId));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteListing(@PathVariable Long id) {
-        service.deleteListing(id);
+        serviceListingService.deleteListing(id);
         return ResponseEntity.noContent().build();
     }
 }

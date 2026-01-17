@@ -1,9 +1,8 @@
-package com.example.demo.models;
+package com.example.demo.Entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
-import java.time.Instant;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
