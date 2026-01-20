@@ -11,12 +11,14 @@ import jakarta.validation.constraints.NotBlank;
 public class ServiceListing {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
 	@NotBlank(message = "Service Title is required")
     private String title;
     private String description;
     private double price;
+
+	private boolean isPublic = true;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
@@ -26,11 +28,11 @@ public class ServiceListing {
     @JoinColumn(name = "worker_id")
     private WorkerProfile worker;
 
-	public Long getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
@@ -74,4 +76,11 @@ public class ServiceListing {
 		this.worker = worker;
 	}
 
+	public boolean isPublic() {
+		return isPublic;
+	}
+
+	public void setPublic(boolean aPublic) {
+		isPublic = aPublic;
+	}
 }

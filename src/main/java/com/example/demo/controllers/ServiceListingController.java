@@ -1,7 +1,8 @@
 package com.example.demo.controllers;
 import com.example.demo.Entities.ServiceListing;
+import com.example.demo.models.CreateServiceRequest;
+import com.example.demo.models.UpdateServiceListingRequest;
 import org.springframework.beans.factory.annotation.*;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.example.demo.services.*;
 import java.util.*;
@@ -9,35 +10,34 @@ import java.util.*;
 @RestController
 @RequestMapping("/api/services")
 public class ServiceListingController {
-
     @Autowired
     private ServiceListingService serviceListingService;
 
-    @PostMapping("/worker/{workerId}")
-    public ResponseEntity<ServiceListing> createServiceByWorker(@PathVariable Long workerId, @RequestBody ServiceListing listing) {
-        return ResponseEntity.ok(serviceListingService.createListing(workerId, listing));
+    @PostMapping("/create")
+    public String createService(@RequestBody CreateServiceRequest createServiceRequest) throws Exception {
+        serviceListingService.createListing(createServiceRequest);
+        return "Service created successfully";
     }
     
-    @PutMapping("/{id}")
-    public ResponseEntity<ServiceListing> updateService(@PathVariable Long id, @RequestBody ServiceListing payload) {
-        ServiceListing updated = serviceListingService.updateListing(id, payload);
-        return ResponseEntity.ok(updated);
+    @PutMapping("/update")
+    public String updateService(@RequestBody UpdateServiceListingRequest updateServiceListingRequest) throws Exception {
+        serviceListingService.updateListing(updateServiceListingRequest);
+        return "Service updated successfully";
     }
 
-    @GetMapping("")
-    public List<ServiceListing> getAllServices() {
+    @GetMapping("/")
+    public List<ServiceListing> getAllServices() throws Exception {
         return serviceListingService.getAllServices();
     }
 
-    @GetMapping("/worker/{workerId}")
-    public ResponseEntity<List<ServiceListing>> getByWorker(@PathVariable Long workerId) {
-        return ResponseEntity.ok(serviceListingService.getServicesByWorker(workerId));
+    @GetMapping("/worker")
+    public List<ServiceListing> getServiceByWorkerId(long workerId) throws Exception {
+        return serviceListingService.getServiceByWorkerId(workerId);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteListing(@PathVariable Long id) {
-        serviceListingService.deleteListing(id);
-        return ResponseEntity.noContent().build();
+    @DeleteMapping("/worker")
+    public String deleteService(long serviceId) throws Exception {
+        serviceListingService.deleteService(serviceId);
+        return "Service deleted successfully";
     }
 }
-

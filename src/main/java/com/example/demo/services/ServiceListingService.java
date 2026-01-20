@@ -2,6 +2,8 @@ package com.example.demo.services;
 
 import com.example.demo.Entities.ServiceListing;
 import com.example.demo.Entities.WorkerProfile;
+import com.example.demo.models.CreateServiceRequest;
+import com.example.demo.models.UpdateServiceListingRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.*;
@@ -9,6 +11,7 @@ import java.util.*;
 import com.example.demo.repositories.*;
 
 import jakarta.transaction.Transactional;
+import org.springframework.util.ObjectUtils;
 
 @Service
 public class ServiceListingService {
@@ -18,32 +21,48 @@ public class ServiceListingService {
 	@Autowired
 	private WorkerProfileRepository workerProfileRepository;
 
-	public ServiceListing createListing(Long workerId, ServiceListing listing) {
-		WorkerProfile worker = workerProfileRepository.findById(workerId).orElseThrow(() -> new RuntimeException("Worker not found"));
-		listing.setWorker(worker);
-		return serviceListingRepository.save(listing);
+	public void createListing(CreateServiceRequest createServiceRequest) throws Exception {
+		WorkerProfile worker = workerProfileRepository.findById(createServiceRequest.getWorkerId()).orElseThrow(() -> new RuntimeException("Worker not found"));
+
+		ServiceListing serviceListing = new ServiceListing();
+		serviceListing.setTitle(createServiceRequest.getTitle());
+		serviceListing.setDescription(createServiceRequest.getDescription());
+		serviceListing.setPrice(createServiceRequest.getPrice());
+		serviceListing.setCategory(createServiceRequest.getServiceCategory());
+		serviceListing.setPublic(createServiceRequest.isPublic());
+		serviceListing.setWorker(worker);
+		serviceListingRepository.save(serviceListing);
 	}
 
 	@Transactional
-	public ServiceListing updateListing(Long listingId, ServiceListing payload) {
-	    ServiceListing existing = serviceListingRepository.findById(listingId).orElseThrow(() -> new RuntimeException("Service listing not found"));
-
-	    if (payload.getTitle() != null) existing.setTitle(payload.getTitle());
-	    if (payload.getDescription() != null) existing.setDescription(payload.getDescription());
-	    if (payload.getCategory() != null) existing.setCategory(payload.getCategory());
-	    if (payload.getPrice() > 0) existing.setPrice(payload.getPrice());
-	    return serviceListingRepository.save(existing);
+	public void updateListing(UpdateServiceListingRequest updateServiceListingRequest) throws Exception {
+	    if (ObjectUtils.isEmpty(updateServiceListingRequest.getWorkerId())){
+            throw new Exception("Worker Id is mandatory to update the service");
+		}
+		if (ObjectUtils.isEmpty(updateServiceListingRequest.getServiceId())){
+			throw new Exception("service Id is mandatory to update the service");
+		}
+		ServiceListing existing = serviceListingRepository.findById(updateServiceListingRequest.getServiceId()).orElseThrow(() -> new RuntimeException("Service for given Service Id not found"));
+		if (!ObjectUtils.isEmpty(updateServiceListingRequest.getWorkerCategory())){
+			existing.setCategory(updateServiceListingRequest.getWorkerCategory());
+		}
+		existing.setTitle(updateServiceListingRequest.getTitle());
+		existing.setDescription(updateServiceListingRequest.getDescription());
+		existing.setPrice(updateServiceListingRequest.getPrice());
+		existing.setPublic(updateServiceListingRequest.isPublic());
+		existing.setWorker(existing.getWorker());
+	    serviceListingRepository.save(existing);
 	}
 
-	public List<ServiceListing> getAllServices() {
+	public List<ServiceListing> getAllServices() throws Exception {
 		return serviceListingRepository.findAll();
 	}
 
-	public List<ServiceListing> getServicesByWorker(Long workerId) {
-		return serviceListingRepository.findByWorkerId(workerId);
+	public List<ServiceListing> getServiceByWorkerId(long workerId) throws Exception {
+		return serviceListingRepository.findServiceByWorkerId(workerId);
 	}
 
-	public void deleteListing(Long id) {
-		serviceListingRepository.deleteById(id);
+	public void deleteService(long serviceId) throws Exception {
+		serviceListingRepository.deleteServiceByServiceListingId(serviceId);
 	}
 }

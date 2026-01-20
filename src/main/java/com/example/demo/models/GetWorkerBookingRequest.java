@@ -4,13 +4,13 @@ import com.example.demo.utils.Required;
 
 public class GetWorkerBookingRequest {
     @Required
-    private Long workerId;
+    private long workerId;
 
-    public Long getWorkerId() {
+    public long getWorkerId() {
         return workerId;
     }
 
-    public void setWorkerId(Long workerId) {
+    public void setWorkerId(long workerId) {
         this.workerId = workerId;
     }
 }
